@@ -30,11 +30,13 @@ class StringUUID(TypeDecorator):
 
     def load_dialect_impl(self, dialect):
         if dialect.name == "postgresql":
-            return dialect.type_descriptor(PG_UUID(as_uuid=False))
+            return dialect.type_descriptor(PG_UUID(as_uuid=True))
         return dialect.type_descriptor(String(36))
 
     def process_bind_param(self, value, dialect):
         if value is not None:
+            if dialect.name == "postgresql":
+                return uuid.UUID(str(value)) if not isinstance(value, uuid.UUID) else value
             return str(value)
         return value
 
