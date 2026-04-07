@@ -8,6 +8,7 @@ def test_imports():
     from app.config.settings import Settings
     assert User is not None
     assert Auction is not None
+    
     assert Bid is not None
     assert AuctionStatus.ACTIVE == "ACTIVE"
 
