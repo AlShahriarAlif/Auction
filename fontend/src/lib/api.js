@@ -27,10 +27,16 @@ class ApiClient {
       headers.Authorization = `Bearer ${token}`;
     }
 
-    const response = await fetch(url, {
-      ...options,
-      headers,
-    });
+    let response;
+    try {
+      response = await fetch(url, {
+        ...options,
+        headers,
+      });
+    } catch (err) {
+      console.error(`Network error for ${options.method || 'GET'} ${url}:`, err);
+      throw new Error('Unable to connect to server. Please check your connection and try again.');
+    }
 
     const data = await response.json();
 
