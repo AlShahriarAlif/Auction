@@ -24,8 +24,8 @@ services:
     ports:
       - "5000:5000"
     environment:
-      DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/auction_db
-      DIRECT_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/auction_db
+      DATABASE_URL: postgresql+asyncpg://postgres.lmthclkskkechzyfenuf:2105158%40CSE.BUET%3EAC%3EBD@aws-1-ap-northeast-1.pooler.supabase.com:5432/postgres
+      DIRECT_URL: postgresql+asyncpg://postgres:2105158%40CSE.BUET%3EAC%3EBD@db.lmthclkskkechzyfenuf.supabase.co:5432/postgres
       JWT_SECRET: your-super-secret-jwt-key-change-in-production
       JWT_EXPIRES_IN: 7d
       PORT: 5000
