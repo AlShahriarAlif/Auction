@@ -1,11 +1,11 @@
 #!/bin/sh
 set -e
 
-echo "Running Prisma db push..."
-npx prisma db push --skip-generate
+echo "Initializing database tables..."
+python init_db.py
 
 echo "Seeding database..."
-node prisma/seed.js || echo "Seed skipped (may already exist)"
+python seed.py || echo "Seed skipped (may already exist)"
 
-echo "Starting server..."
-exec node src/server.js
+echo "Starting FastAPI server..."
+exec uvicorn app.main:socket_app --host 0.0.0.0 --port 5000

@@ -1,17 +1,17 @@
-FROM node:18-alpine
-
-RUN apk add --no-cache openssl
+FROM python:3.12-slim
 
 WORKDIR /app
 
-COPY package*.json ./
-RUN npm ci --only=production
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
 
-COPY prisma ./prisma/
-RUN npx prisma generate
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-COPY src ./src/
-COPY docker-entrypoint.sh ./
+COPY . .
+
+COPY docker-entrypoint.sh .
 RUN chmod +x docker-entrypoint.sh
 
 EXPOSE 5000
