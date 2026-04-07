@@ -7,6 +7,7 @@ export default function AuthCallback() {
   const router = useRouter();
 
   useEffect(() => {
+    if (!supabase) { router.push('/auth/login'); return; }
     // Supabase handles the token exchange from the URL hash automatically.
     // We just need to wait for the session to be set and redirect.
     supabase.auth.getSession().then(({ data: { session } }) => {

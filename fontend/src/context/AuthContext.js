@@ -25,6 +25,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   useEffect(() => {
+    if (!supabase) { setLoading(false); return; }
     // Get initial session
     supabase.auth.getSession().then(({ data: { session: s } }) => {
       setSession(s);
@@ -50,12 +51,14 @@ export function AuthProvider({ children }) {
   }, [syncProfile]);
 
   const login = async (email, password) => {
+    if (!supabase) throw new Error('Supabase not initialized');
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) throw error;
     return data;
   };
 
   const register = async ({ name, username, email, password }) => {
+    if (!supabase) throw new Error('Supabase not initialized');
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -66,6 +69,7 @@ export function AuthProvider({ children }) {
   };
 
   const loginWithGoogle = async () => {
+    if (!supabase) throw new Error('Supabase not initialized');
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: { redirectTo: `${window.location.origin}/auth/callback` },
@@ -75,7 +79,7 @@ export function AuthProvider({ children }) {
   };
 
   const logout = async () => {
-    await supabase.auth.signOut();
+    if (supabase) await supabase.auth.signOut();
     setUser(null);
     setSession(null);
   };
