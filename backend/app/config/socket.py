@@ -4,12 +4,7 @@ from app.config.settings import settings
 
 sio = socketio.AsyncServer(
     async_mode="asgi",
-    cors_allowed_origins=[
-        settings.FRONTEND_URL,
-        "http://localhost:3000",
-        "https://auction-ebay-ot5c3q471-siams-projects-6928afe7.vercel.app",
-        "https://auction-ebay-isd.vercel.app",
-    ],
+    cors_allowed_origins="*",
 )
 
 
