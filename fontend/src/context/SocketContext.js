@@ -12,7 +12,7 @@ export function SocketProvider({ children }) {
 
   // Create socket connection once
   useEffect(() => {
-    const WS_URL = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5000';
+    const WS_URL = process.env.NEXT_PUBLIC_SOCKET_URL || 'https://auction-api-5lfe.onrender.com';
     const newSocket = io(WS_URL, { transports: ['websocket', 'polling'] });
 
     newSocket.on('connect', () => {
