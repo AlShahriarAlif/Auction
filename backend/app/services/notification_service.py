@@ -24,6 +24,7 @@ async def create_notification(
     await db.refresh(notification)
 
     try:
+        print(f"[Notification] Emitting to room user:{user_id}")
         await sio.emit(
             "notification",
             {
@@ -37,7 +38,8 @@ async def create_notification(
             },
             room=f"user:{user_id}",
         )
-    except Exception:
-        pass
+        print(f"[Notification] Emitted successfully to user:{user_id}")
+    except Exception as e:
+        print(f"[Notification] Error emitting: {e}")
 
     return notification

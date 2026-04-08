@@ -71,10 +71,16 @@ export default function AuctionDetailPage() {
           setTimeout(() => setOutbidToast(null), 6000);
         }
       });
+      socket.on('auction-ended', (data) => {
+        if (data.auctionId === id) {
+          loadAuction();
+        }
+      });
       return () => {
         socket.emit('leave-auction', id);
         socket.off('bid-update');
         socket.off('outbid');
+        socket.off('auction-ended');
       };
     }
   }, [socket, id, loadAuction]);

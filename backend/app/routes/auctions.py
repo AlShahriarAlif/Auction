@@ -233,7 +233,8 @@ class CreateAuctionRequest(BaseModel):
     condition: str = "New"
     startPrice: float
     reservePrice: float | None = None
-    duration: int
+    duration: int | None = None  # legacy: days
+    durationMinutes: int | None = None  # preferred: minutes (min 2)
     bidIncrement: float = 1.0
     shippingCost: float = 0.0
     shippingMethod: str | None = None
@@ -256,8 +257,18 @@ async def create_auction(
     if body.startPrice < 0.01:
         raise HTTPException(status_code=400, detail="Start price must be at least 0.01")
 
+    # Determine duration
+    if body.durationMinutes is not None:
+        if body.durationMinutes < 2:
+            raise HTTPException(status_code=400, detail="Auction duration must be at least 2 minutes")
+        duration_delta = timedelta(minutes=body.durationMinutes)
+    elif body.duration is not None:
+        duration_delta = timedelta(days=body.duration)
+    else:
+        raise HTTPException(status_code=400, detail="Duration is required")
+
     start_time = datetime.utcnow() if body.startImmediately else datetime.fromisoformat(body.startTime)
-    end_time = start_time + timedelta(days=body.duration)
+    end_time = start_time + duration_delta
 
     auction = Auction(
         title=body.title,
