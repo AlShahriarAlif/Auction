@@ -15,7 +15,7 @@ class ApiClient {
     return null;
   }
 
-  async request(endpoint, options = {}) {
+  async request(endpoint, options = {}, retries = 2) {
     const url = `${this.baseUrl}${endpoint}`;
     const headers = {
       'Content-Type': 'application/json',
@@ -28,14 +28,29 @@ class ApiClient {
     }
 
     let response;
-    try {
-      response = await fetch(url, {
-        ...options,
-        headers,
-      });
-    } catch (err) {
-      console.error(`Network error for ${options.method || 'GET'} ${url}:`, err);
-      throw new Error('Unable to connect to server. Please check your connection and try again.');
+    let lastErr;
+    for (let attempt = 0; attempt <= retries; attempt++) {
+      try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 60000);
+        response = await fetch(url, {
+          ...options,
+          headers,
+          signal: controller.signal,
+        });
+        clearTimeout(timeout);
+        break;
+      } catch (err) {
+        lastErr = err;
+        console.error(`Network error (attempt ${attempt + 1}) for ${options.method || 'GET'} ${url}:`, err);
+        if (attempt < retries) {
+          await new Promise(r => setTimeout(r, 5000 * (attempt + 1)));
+        }
+      }
+    }
+
+    if (!response) {
+      throw new Error('Server is waking up — please try again in a moment.');
     }
 
     const data = await response.json();
